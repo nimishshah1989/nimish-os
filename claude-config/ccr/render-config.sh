@@ -59,16 +59,25 @@ fi
 
 sed "${SED_ARGS[@]}" "$TEMPLATE" > "$OUT_REPO"
 
-# In Max-plan mode CCR cannot authenticate to Anthropic, so any route
-# pointed at an anthropic,* model 401s. Strip those routes from the
-# rendered config so they fall back to `default`. Opus is still
-# reachable by shelling out with `env -u ANTHROPIC_* claude --model ...`,
-# which bypasses CCR entirely.
+# In Max-plan mode CCR cannot authenticate to Anthropic. Beyond the
+# Router entries (think/webSearch), the anthropic *provider* itself
+# must also be removed — otherwise any subprocess that runs
+# `claude --model claude-opus-4-7` without `env -u ANTHROPIC_*` inherits
+# ANTHROPIC_BASE_URL=http://127.0.0.1:3456 (from `ccr activate`), hits
+# CCR, and CCR happily forwards to api.anthropic.com with the
+# placeholder key, producing an endless 401 retry storm.
+#
+# Removing the provider makes that routing path fail fast with "provider
+# not found", forcing callers to use the intended subprocess bypass:
+#   env -u ANTHROPIC_BASE_URL -u ANTHROPIC_API_KEY -u ANTHROPIC_AUTH_TOKEN \
+#     claude --model claude-opus-4-7
+# which talks to api.anthropic.com directly using Max-plan credentials.
 if [ "$MAX_PLAN_MODE" = "yes" ]; then
   tmp=$(mktemp)
-  jq 'del(.Router.think, .Router.webSearch)' "$OUT_REPO" > "$tmp" \
-    && mv "$tmp" "$OUT_REPO"
-  echo "Max-plan mode: stripped .Router.think and .Router.webSearch."
+  jq 'del(.Router.think, .Router.webSearch)
+      | .Providers |= map(select(.name != "anthropic"))' \
+    "$OUT_REPO" > "$tmp" && mv "$tmp" "$OUT_REPO"
+  echo "Max-plan mode: removed anthropic provider and think/webSearch routes."
 fi
 
 cp "$OUT_REPO" "$OUT_RUNTIME"
