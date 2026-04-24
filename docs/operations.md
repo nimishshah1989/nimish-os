@@ -24,7 +24,7 @@ CCR handles routing; these flags force a specific model when needed.
 | Architect / decomposition | `claude --model anthropic,claude-opus-4-7` |
 | Coder (default) | `claude --model moonshot,kimi-k2.6` |
 | Reviewer | `claude --model anthropic,claude-opus-4-6` |
-| Background scans | `claude --model openrouter,deepseek/deepseek-chat-v3.1:free` |
+| Background scans | `claude --model openrouter,deepseek/deepseek-chat-v3.1` |
 
 ## Routine commands
 - `ccr status` — router health
