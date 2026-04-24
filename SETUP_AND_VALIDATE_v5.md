@@ -29,7 +29,7 @@ Run Phase A first. Phase A ends with a validated system ready to build products.
 | Architecture, decomposition, Plan Mode | claude-opus-4-7 | Anthropic direct | `think` |
 | Coding, default, long-context | kimi-k2.6 | Moonshot direct | `default`, `longContext` |
 | Code review, milestone review | claude-opus-4-6 | Anthropic direct | (explicit invoke for review agents) |
-| Background file scans | deepseek-chat | OpenRouter free | `background` |
+| Background file scans | deepseek-chat-v3.1:free | OpenRouter free | `background` |
 | Fallback coder | moonshotai/kimi-k2.6 | OpenRouter | (if Moonshot direct fails) |
 
 These are written into the CCR config below. User does not configure them.
@@ -283,20 +283,15 @@ cat > claude-config/ccr/config.json <<EOF
       "api_base_url": "https://openrouter.ai/api/v1/chat/completions",
       "api_key": "$OPENROUTER_API_KEY",
       "models": [
-        "deepseek/deepseek-chat",
+        "deepseek/deepseek-chat-v3.1:free",
         "moonshotai/kimi-k2.6"
       ],
-      "transformer": {
-        "use": ["openrouter"],
-        "deepseek/deepseek-chat": {
-          "use": [["maxtoken", { "max_tokens": 8192 }]]
-        }
-      }
+      "transformer": { "use": ["openrouter"] }
     }
   ],
   "Router": {
     "default":     "moonshot,kimi-k2.6",
-    "background":  "openrouter,deepseek/deepseek-chat",
+    "background":  "openrouter,deepseek/deepseek-chat-v3.1:free",
     "think":       "anthropic,claude-opus-4-7",
     "longContext": "moonshot,kimi-k2.6",
     "longContextThreshold": 45000,
@@ -361,7 +356,7 @@ curl -s -X POST http://127.0.0.1:3456/v1/messages \
   -H "Content-Type: application/json" \
   -H "x-api-key: $CCR_KEY" \
   -H "anthropic-version: 2023-06-01" \
-  -d '{"model":"openrouter,deepseek/deepseek-chat","max_tokens":20,"messages":[{"role":"user","content":"Reply: DS-OK"}]}' \
+  -d '{"model":"openrouter,deepseek/deepseek-chat-v3.1:free","max_tokens":20,"messages":[{"role":"user","content":"Reply: DS-OK"}]}' \
   | jq -r '.content[0].text // .error.message'
 ```
 **Verify:** Contains "DS-OK". OpenRouter free tier occasionally rate limits; retry once if first attempt fails.

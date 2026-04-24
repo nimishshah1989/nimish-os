@@ -27,20 +27,15 @@
       "api_base_url": "https://openrouter.ai/api/v1/chat/completions",
       "api_key": "__OPENROUTER_API_KEY__",
       "models": [
-        "deepseek/deepseek-chat",
+        "deepseek/deepseek-chat-v3.1:free",
         "moonshotai/kimi-k2.6"
       ],
-      "transformer": {
-        "use": ["openrouter"],
-        "deepseek/deepseek-chat": {
-          "use": [["maxtoken", { "max_tokens": 8192 }]]
-        }
-      }
+      "transformer": { "use": ["openrouter"] }
     }
   ],
   "Router": {
     "default":     "moonshot,kimi-k2.6",
-    "background":  "openrouter,deepseek/deepseek-chat",
+    "background":  "openrouter,deepseek/deepseek-chat-v3.1:free",
     "think":       "anthropic,claude-opus-4-7",
     "longContext": "moonshot,kimi-k2.6",
     "longContextThreshold": 45000,
