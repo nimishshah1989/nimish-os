@@ -1,0 +1,8 @@
+.setup-inputs
+.env
+.env.local
+*.log
+__pycache__/
+node_modules/
+.ccr-runtime/
+claude-config/ccr/config.json
