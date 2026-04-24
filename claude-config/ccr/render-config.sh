@@ -47,15 +47,29 @@ SED_ARGS=(
   -e "s|__OPENROUTER_API_KEY__|$OPENROUTER_API_KEY|g"
 )
 
+MAX_PLAN_MODE=no
 if [ -n "$ANTHROPIC_API_KEY" ] && [ "$SKIP_ANTHROPIC_API" != "yes" ]; then
   SED_ARGS+=( -e "s|__ANTHROPIC_API_KEY__|$ANTHROPIC_API_KEY|g" )
 else
+  MAX_PLAN_MODE=yes
   echo "Note: ANTHROPIC_API_KEY unset or SKIP_ANTHROPIC_API=yes — leaving" \
        "__ANTHROPIC_API_KEY__ placeholder in config. Invoke Opus outside CCR" \
        "(Max-plan native routing)."
 fi
 
 sed "${SED_ARGS[@]}" "$TEMPLATE" > "$OUT_REPO"
+
+# In Max-plan mode CCR cannot authenticate to Anthropic, so any route
+# pointed at an anthropic,* model 401s. Strip those routes from the
+# rendered config so they fall back to `default`. Opus is still
+# reachable by shelling out with `env -u ANTHROPIC_* claude --model ...`,
+# which bypasses CCR entirely.
+if [ "$MAX_PLAN_MODE" = "yes" ]; then
+  tmp=$(mktemp)
+  jq 'del(.Router.think, .Router.webSearch)' "$OUT_REPO" > "$tmp" \
+    && mv "$tmp" "$OUT_REPO"
+  echo "Max-plan mode: stripped .Router.think and .Router.webSearch."
+fi
 
 cp "$OUT_REPO" "$OUT_RUNTIME"
 chmod 600 "$OUT_REPO" "$OUT_RUNTIME"
