@@ -36,9 +36,9 @@ CCR_KEY=$(jq -r .APIKEY "$HOME/.claude-code-router/config.json")
 check "Kimi K2.6 responds" \
   "curl -s -X POST http://127.0.0.1:3456/v1/messages -H 'x-api-key: $CCR_KEY' -H 'anthropic-version: 2023-06-01' -H 'Content-Type: application/json' -d '{\"model\":\"moonshot,kimi-k2.6\",\"max_tokens\":10,\"messages\":[{\"role\":\"user\",\"content\":\"ok\"}]}' | jq -e '.content' > /dev/null"
 check "Opus 4.7 accessible via Max plan" \
-  "echo 'Reply: OPUS47-OK' | env -u ANTHROPIC_BASE_URL -u ANTHROPIC_API_KEY -u ANTHROPIC_AUTH_TOKEN claude --model claude-opus-4-7 --print --no-stream 2>/dev/null | grep -q 'OPUS47-OK'"
+  "echo 'Reply: OPUS47-OK' | env -u ANTHROPIC_BASE_URL -u ANTHROPIC_API_KEY -u ANTHROPIC_AUTH_TOKEN claude --model claude-opus-4-7 --print 2>/dev/null | grep -q 'OPUS47-OK'"
 check "Opus 4.6 accessible via Max plan" \
-  "echo 'Reply: OPUS46-OK' | env -u ANTHROPIC_BASE_URL -u ANTHROPIC_API_KEY -u ANTHROPIC_AUTH_TOKEN claude --model claude-opus-4-6 --print --no-stream 2>/dev/null | grep -q 'OPUS46-OK'"
+  "echo 'Reply: OPUS46-OK' | env -u ANTHROPIC_BASE_URL -u ANTHROPIC_API_KEY -u ANTHROPIC_AUTH_TOKEN claude --model claude-opus-4-6 --print 2>/dev/null | grep -q 'OPUS46-OK'"
 
 # Skills
 check "Community skills installed (6)" \
