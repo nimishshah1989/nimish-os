@@ -27,7 +27,7 @@
       "api_base_url": "https://openrouter.ai/api/v1/chat/completions",
       "api_key": "__OPENROUTER_API_KEY__",
       "models": [
-        "deepseek/deepseek-chat",
+        "deepseek/deepseek-chat-v3.1",
         "moonshotai/kimi-k2.6"
       ],
       "transformer": { "use": ["openrouter"] }
@@ -35,9 +35,10 @@
   ],
   "Router": {
     "default":     "moonshot,kimi-k2.6",
-    "background":  "openrouter,deepseek/deepseek-chat",
+    "background":  "openrouter,deepseek/deepseek-chat-v3.1",
     "think":       "anthropic,claude-opus-4-7",
     "longContext": "moonshot,kimi-k2.6",
+    "longContextThreshold": 45000,
     "webSearch":   "anthropic,claude-opus-4-7",
     "image":       "moonshot,kimi-k2.6"
   }
