@@ -286,7 +286,12 @@ cat > claude-config/ccr/config.json <<EOF
         "deepseek/deepseek-chat",
         "moonshotai/kimi-k2.6"
       ],
-      "transformer": { "use": ["openrouter"] }
+      "transformer": {
+        "use": ["openrouter"],
+        "deepseek/deepseek-chat": {
+          "use": [["maxtoken", { "max_tokens": 8192 }]]
+        }
+      }
     }
   ],
   "Router": {
@@ -294,6 +299,7 @@ cat > claude-config/ccr/config.json <<EOF
     "background":  "openrouter,deepseek/deepseek-chat",
     "think":       "anthropic,claude-opus-4-7",
     "longContext": "moonshot,kimi-k2.6",
+    "longContextThreshold": 45000,
     "webSearch":   "anthropic,claude-opus-4-7",
     "image":       "moonshot,kimi-k2.6"
   }
