@@ -13,6 +13,18 @@ Format:
 
 ---
 
+## 2026-04-26 — Session Boundary Protocol + Design Protocol added
+- Outcome: CLAUDE.md v5.2 codifies WHEN to rotate Claude Code sessions
+  (not just at milestone boundary — also at 5 tasks, mode shift,
+  context heaviness, or three-strike failure) and WHEN/HOW to use
+  claude.ai Artifacts for any UI-bearing product (mandatory design
+  pass before frontend coding starts; PRD must reference saved
+  Artifact as the design spec for the M-XX FRONTEND milestone).
+- Artifact: PR #9 (pending merge).
+- Verified: rules added; first real test will be the cas-analyzer
+  M-03 FRONTEND milestone after the PRD is updated with the saved
+  Artifact reference.
+
 ## 2026-04-26 — Switched to Claude-only mode + Karpathy principles
 - Outcome: nimish-os now defaults to single-provider Claude (Max plan)
   for all routing — Opus 4.7 for planning, Sonnet 4.6 for coding,
