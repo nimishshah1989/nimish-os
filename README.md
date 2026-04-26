@@ -11,10 +11,13 @@ skills, CCR configuration, Notion schemas, and product PRDs.
 - `docs/` — Architecture notes, decisions, operational docs
 
 ## Operation
-See `docs/operations.md` for daily usage patterns.
+See `docs/operations.md` for daily usage patterns. Default mode is
+**Claude-only via Max plan** — launch Claude Code through
+`claude-config/launch.sh` so no stale CCR env can leak in.
 
 ## Setup
 The authoritative setup procedure is `SETUP_AND_VALIDATE_v5.md` at the repo
 root. Phase A is run once per machine and expects the seven credentials
 listed in its Phase 0 input block. Phase B (SonarQube, Telegram, wiki,
-MCP servers) is deferred until deployment time.
+MCP servers) is deferred until deployment time. CCR (multi-provider
+routing) is also deferred — see `claude-config/ccr/README.md`.
