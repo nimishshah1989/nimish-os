@@ -1,4 +1,4 @@
-# Forge OS — Global Rules v5.1
+# Forge OS — Global Rules v5.2
 
 ## The Four Laws (Non-Negotiable)
 1. PROVE NEVER CLAIM — Every claim must be verifiable. Run it. Show output.
@@ -96,6 +96,69 @@ bash claude-config/launch.sh
 2. Read memory-bank/progress.md if it exists
 3. State: current project, milestone, last completed task
 4. Ask: "Continue or new direction?"
+
+## Session Boundary Protocol
+
+A single Claude Code session must not run forever. Long-lived sessions
+accumulate irrelevant context, get expensive, make failures harder to
+isolate, and erode the Karpathy "surgical changes" discipline. **Rotate
+the session at the FIRST of these triggers — don't wait for milestone
+boundary alone:**
+
+1. **Milestone boundary** — at every milestone-end check-in.
+2. **Five completed tasks** since the last rotation, even mid-milestone.
+3. **Context heaviness** — when you've read >25 files, run >50 Bash
+   commands, or otherwise judge the working context to be >60% full.
+4. **Mode shift** — switching from architecture/planning to coding,
+   or from coding to debugging/review. Each mode wants a clean slate.
+5. **Three-strike failure** — after three consecutive failed attempts
+   at the same goal (test won't pass, build broken, same error
+   recurring). The accumulated wrong-direction context is hurting you.
+
+**Rotation procedure:**
+1. Update `memory-bank/activeContext.md` with current state in ≤15
+   lines: project, milestone, last completed task, in-progress,
+   blockers, next concrete action. Be terse — the next session reads
+   this cold.
+2. Append a one-line entry to `memory-bank/progress.md` if a milestone
+   completed.
+3. Tell the user: *"Session-rotate point. Run `bash claude-config/launch.sh`
+   in a new terminal to continue. Next session resumes at: <next action>."*
+4. Stop. Do not continue in this session.
+
+The new session reads `memory-bank/` per the Session Start Protocol
+and picks up exactly where the rotation left off.
+
+## Design Protocol (for any product with a UI)
+
+If a PRD has any client-facing UI — web, mobile, internal dashboard,
+admin panel — the visual design is decided in **claude.ai Artifacts**
+*before* the Claude Code build of that UI starts. Backend-only
+products (API services, batch jobs, infra) skip this protocol.
+
+**Sequence:**
+1. After Opus 4.7 decomposes the PRD, before any frontend code is
+   written, the user opens claude.ai in a browser and prompts Claude
+   to render the UI as an Artifact (single-page React + Tailwind, mock
+   JSON data, live preview pane).
+2. User iterates visually until the design is approved. Artifact is
+   saved (publish to a URL or copy the source code).
+3. The PRD must contain an explicit `M-XX FRONTEND` milestone whose
+   Definition of Done references the saved Artifact: *"implements the
+   design at <Artifact URL or source path> exactly."* Tasks under
+   this milestone reference Artifact sections.
+4. The Claude Code agent in the M-XX session ports the Artifact into
+   the project's actual stack. Layout, copy, and interaction behavior
+   are preserved verbatim; the agent adapts only what the chosen stack
+   forces (e.g. Vue instead of React, Chakra instead of Tailwind).
+   When the Artifact is ambiguous on any point, the agent asks — it
+   does not invent UI choices.
+
+**Why:** LLM agents writing UI from a text spec produce generic,
+ugly-by-default interfaces and waste cycles on visual decisions that
+should be human-made. Artifacts give a fast visual loop with a human
+in it. Once the design is locked, porting is mechanical and the agent
+does it well.
 
 ## Commit Protocol
 - Run tests before every commit
