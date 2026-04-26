@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Phase A Go/No-Go checklist. Phase A is complete only when this prints
-# "PHASE A COMPLETE". Sourced from SETUP_AND_VALIDATE_v5.md section A9.
+# Phase A Go/No-Go checklist (Claude-only Max-plan mode).
+# Phase A is complete only when this prints "PHASE A COMPLETE".
+# Sourced from SETUP_AND_VALIDATE_v5.md section A9.
 
 set -a
 # shellcheck disable=SC1090
@@ -18,7 +19,9 @@ check() {
   fi
 }
 
-echo "── Phase A Go/No-Go ──"
+CLEAN_ENV="env -u ANTHROPIC_BASE_URL -u ANTHROPIC_API_KEY -u ANTHROPIC_AUTH_TOKEN"
+
+echo "── Phase A Go/No-Go (Claude-only Max-plan mode) ──"
 
 # Repo
 check "nimish-os repo exists" \
@@ -26,23 +29,25 @@ check "nimish-os repo exists" \
 
 # Config
 check "Global CLAUDE.md exists" "[ -f $HOME/.claude/CLAUDE.md ]"
-check "CCR config valid JSON" \
-  "jq . $HOME/.claude-code-router/config.json > /dev/null 2>&1"
-check "CCR service listening" \
-  "curl -sf http://127.0.0.1:3456/health > /dev/null"
+check "Max-plan credentials present" "[ -f $HOME/.claude/.credentials.json ]"
+check "Launcher script exists and is executable" \
+  "[ -x $HOME/nimish-os/claude-config/launch.sh ]"
 
-# Models
-CCR_KEY=$(jq -r .APIKEY "$HOME/.claude-code-router/config.json")
-check "Kimi K2.6 responds" \
-  "curl -s -X POST http://127.0.0.1:3456/v1/messages -H 'x-api-key: $CCR_KEY' -H 'anthropic-version: 2023-06-01' -H 'Content-Type: application/json' -d '{\"model\":\"moonshot,kimi-k2.6\",\"max_tokens\":10,\"messages\":[{\"role\":\"user\",\"content\":\"ok\"}]}' | jq -e '.content' > /dev/null"
+# Models — all via Max-plan native auth (no CCR)
 check "Opus 4.7 accessible via Max plan" \
-  "echo 'Reply: OPUS47-OK' | env -u ANTHROPIC_BASE_URL -u ANTHROPIC_API_KEY -u ANTHROPIC_AUTH_TOKEN claude --model claude-opus-4-7 --print 2>/dev/null | grep -q 'OPUS47-OK'"
+  "echo 'Reply: OPUS47-OK' | $CLEAN_ENV claude --model claude-opus-4-7 --print 2>/dev/null | grep -q 'OPUS47-OK'"
 check "Opus 4.6 accessible via Max plan" \
-  "echo 'Reply: OPUS46-OK' | env -u ANTHROPIC_BASE_URL -u ANTHROPIC_API_KEY -u ANTHROPIC_AUTH_TOKEN claude --model claude-opus-4-6 --print 2>/dev/null | grep -q 'OPUS46-OK'"
+  "echo 'Reply: OPUS46-OK' | $CLEAN_ENV claude --model claude-opus-4-6 --print 2>/dev/null | grep -q 'OPUS46-OK'"
+check "Sonnet 4.6 accessible via Max plan" \
+  "echo 'Reply: SONNET-OK' | $CLEAN_ENV claude --model claude-sonnet-4-6 --print 2>/dev/null | grep -q 'SONNET-OK'"
+check "Haiku 4.5 accessible via Max plan" \
+  "echo 'Reply: HAIKU-OK' | $CLEAN_ENV claude --model claude-haiku-4-5-20251001 --print 2>/dev/null | grep -q 'HAIKU-OK'"
 
 # Skills
 check "Community skills installed (6)" \
   "[ \$(npx skills list 2>/dev/null | grep -E '(cso|qa-only|ship|canary|varlock|obsidian)' | wc -l) -ge 6 ]"
+check "Karpathy skills plugin installed" \
+  "npx skills list 2>/dev/null | grep -qi karpathy || ls $HOME/.claude/plugins/ 2>/dev/null | grep -qi karpathy"
 check "financial-platform skill exists" \
   "[ -f $HOME/.claude/skills/financial-platform.md ]"
 check "restaurant-intelligence skill exists" \

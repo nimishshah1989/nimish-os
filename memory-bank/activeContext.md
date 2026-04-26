@@ -5,27 +5,31 @@ update before session end. Keep terse — this is a working-memory file, not a
 log. Historical entries belong in `progress.md`.
 
 ## Project
-nimish-os — Project Intelligence OS (CCR-routed Claude Code workflow,
+nimish-os — Project Intelligence OS (Claude-only Max-plan dev workflow,
 Notion-backed task/decision log, PRD-driven product delivery).
 
 ## Current Milestone
 Phase A — per-machine setup & validation (`SETUP_AND_VALIDATE_v5.md`).
+Now running in v5.1 Claude-only mode (CCR deferred).
 
 ## Last Completed Task
-[CCR] fix: cap DeepSeek max_tokens and divert long context (PR #2, merged
-`00ed312`). Background route swapped from `deepseek/deepseek-chat` (64k ctx)
-to `deepseek/deepseek-chat-v3.1` (~164k ctx, paid); `longContextThreshold=45000`
-added as safety net to Kimi (256k).
+Switched nimish-os to Claude-only Max-plan mode and integrated the Karpathy
+behavioral principles into global CLAUDE.md. CCR moved to deferred status
+with rationale documented in `claude-config/ccr/README.md`. New
+`claude-config/launch.sh` provides a sterile-env Claude Code launcher that
+eliminates ANTHROPIC_* leakage from shell rc / settings.json / inherited
+process env (the entire 401 / ECONNREFUSED class of failures we hit
+during the cas-analyzer attempt).
 
 ## In Progress
-- Phase A validation run (pending on local machine):
-  `bash claude-config/ccr/render-config.sh && ccr restart` → Phase A smoke
-  tests (§A4.3) → `bash claude-config/phase-a-checklist.sh`.
+- First real product run (`prds/cas-analyzer.md`) pending: paste the build
+  prompt into a fresh `bash claude-config/launch.sh` session.
 
 ## Blockers
 None.
 
 ## Next Action
-1. Render + restart CCR to pick up the merged DeepSeek fix.
-2. Run Phase A smoke tests; expect `KIMI-OK`, `OPUS47-OK`, `OPUS46-OK`, `DS-OK`.
-3. Green checklist → move to Phase B (SonarQube, Telegram, wiki, MCP).
+1. Pull latest main on laptop.
+2. `bash claude-config/launch.sh`
+3. Paste the cas-analyzer build prompt; let the Daily Usage loop run
+   through M-01 → milestone-boundary check-in.

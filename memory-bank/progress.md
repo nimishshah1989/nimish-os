@@ -13,6 +13,20 @@ Format:
 
 ---
 
+## 2026-04-26 — Switched to Claude-only mode + Karpathy principles
+- Outcome: nimish-os now defaults to single-provider Claude (Max plan)
+  for all routing — Opus 4.7 for planning, Sonnet 4.6 for coding,
+  Opus 4.6 for review, Haiku 4.5 for cheap tasks. CCR is deferred.
+  Added `claude-config/launch.sh` sterile-env launcher to permanently
+  kill the ANTHROPIC_* env-leak failure class. Karpathy behavioral
+  principles (Think Before Coding, Simplicity First, Surgical Changes,
+  Goal-Driven Execution) integrated into `claude-config/CLAUDE.md`.
+- Artifact: PR #8 (pending merge).
+- Verified: phase-a-checklist.sh rewritten to test all four Claude
+  models via Max-plan native auth — pending re-run on laptop after
+  pull. Karpathy plugin install is a one-time `/plugin marketplace
+  add` inside any Claude Code session.
+
 ## 2026-04-24 — CCR background route hardened
 - Outcome: DeepSeek 64k context-length errors can no longer break background
   tasks. Paid `deepseek/deepseek-chat-v3.1` (~164k ctx) on the OpenRouter

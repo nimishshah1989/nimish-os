@@ -4,6 +4,21 @@
 
 ---
 
+> ⚠️ **As of v5.1: default mode is Claude-only via Max plan.**
+> CCR (multi-provider routing through Kimi/DeepSeek) is **deferred** —
+> the sections below that configure CCR (A4, A4.x) are kept as
+> reference for the day we re-enable, but the active workflow is:
+>
+> 1. `bash claude-config/launch.sh` to start a sterile Claude Code
+>    session.
+> 2. `bash claude-config/phase-a-checklist.sh` to validate
+>    (uses only Max-plan native auth — no CCR).
+>
+> See `docs/operations.md` and `claude-config/ccr/README.md` for the
+> rationale.
+
+---
+
 ## For Claude Code Reading This
 
 This is an executable instruction set. Read it fully before starting.
